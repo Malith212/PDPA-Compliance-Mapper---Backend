@@ -101,8 +101,7 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
         if semantic_pass and matched_keyword:
             status = "compliant"
             explanation = (
-                f'This clause semantically matches "{section["title"]}" '
-                f'and contains the concrete term "{matched_keyword}", '
+                f'This clause semantically matches "{section["title"]}", '
                 f"so it is flagged as compliant."
             )
         elif semantic_pass and not matched_keyword:
