@@ -107,11 +107,8 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
         elif semantic_pass and not matched_keyword:
             status = "gap"
             explanation = (
-                f'This clause sounds related to "{section["title"]}" '
-                f"but no clause found contains a specific keyword tied to "
-                f"this obligation, so it is treated as generic privacy "
-                f'language rather than a real compliance commitment under '
-                f'{section["section_number"]}.'
+                f'No clause in the policy sufficiently addresses "{section["title"]}". '
+                f"Possible compliance gap under {section['section_number']}."
             )
         else:
             status = "gap"
