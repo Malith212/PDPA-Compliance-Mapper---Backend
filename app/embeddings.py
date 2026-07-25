@@ -10,20 +10,20 @@ from functools import lru_cache
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 
-MODEL_NAME = "all-MiniLM-L6-v2"  # small, fast, good general-purpose model
+MODEL_NAME = "all-MiniLM-L6-v2"  
 
-
+#load the AI model
 @lru_cache(maxsize=1)
 def get_model() -> SentenceTransformer:
     return SentenceTransformer(MODEL_NAME)
 
-
+#Convert sentences into numbers
 def embed(texts: list[str]) -> np.ndarray:
     """Embed a list of strings into an array of vectors."""
     model = get_model()
     return model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
 
-
+#
 def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
     """Cosine similarity between two already-normalised vectors."""
     return float(util.cos_sim(vec_a, vec_b).item())

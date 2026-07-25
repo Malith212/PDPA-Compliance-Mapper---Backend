@@ -27,9 +27,7 @@ from typing import Optional, List, Dict
 from .embeddings import embed
 from .pdpa_sections import PDPA_SECTIONS
 
-# Tunable thresholds -- raise SEMANTIC_THRESHOLD if you see false positives
-# on generic privacy-domain text; lower it if genuine paraphrases are being
-# missed.
+#Step 5: Walk down the list, checking the threshold AND the keyword
 SEMANTIC_THRESHOLD = 0.55
 SEMANTIC_WEIGHT = 0.7
 KEYWORD_WEIGHT = 0.3
@@ -51,27 +49,27 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
     if not policy_text_sentences:
         return [_empty_result(section) for section in PDPA_SECTIONS]
 
+    #Convert policy_text_sentences into "meaning numbers"
     sentence_embeddings = embed(policy_text_sentences)
 
     results = []
     for section in PDPA_SECTIONS:
+        #Convert anchor_embeddings into "meaning numbers"
         anchor_embeddings = embed(section["anchor_phrases"])
 
-        # Embeddings are normalised, so a dot product IS the cosine
-        # similarity. This matrix gives similarity of every sentence
-        # against every anchor phrase for this section in one shot.
+        # Step 2: Compare EVERY sentence against EVERY anchor phrase
         similarity_matrix = np.matmul(sentence_embeddings, anchor_embeddings.T)
-        # For each sentence, its best score against any anchor for this section.
+
+        # Step 3: For each sentence, keep only its BEST score
         per_sentence_best = similarity_matrix.max(axis=1)
 
-        # Look at every sentence that clears the semantic bar, best first --
-        # not just the single highest scoring one. A real policy often has
-        # several sentences about the same obligation; the top-scoring one
-        # isn't always the one that contains the concrete legal keyword.
+
+        #Step 4: Sort sentences by score, highest first
         candidate_order = np.argsort(-per_sentence_best)  # descending
 
         chosen_idx = None
         matched_keyword = None
+
         for idx in candidate_order:
             idx = int(idx)
             score = float(per_sentence_best[idx])
@@ -84,9 +82,7 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
                 break
 
         if chosen_idx is None:
-            # No threshold-passing sentence had a keyword match (or none
-            # passed the threshold at all) -- fall back to the single best
-            # scoring sentence purely for display purposes.
+            # just pick the top-scoring one anyway
             chosen_idx = int(candidate_order[0])
 
         best_semantic_score = float(per_sentence_best[chosen_idx])
