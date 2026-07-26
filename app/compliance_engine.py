@@ -32,7 +32,7 @@ SEMANTIC_THRESHOLD = 0.55
 SEMANTIC_WEIGHT = 0.7
 KEYWORD_WEIGHT = 0.3
 
-
+# Checks if a sentence contains any one of a list of keywords, and tells you which one it found.
 def _keyword_hit(sentence: str, keywords: List[str]) -> Optional[str]:
     lowered = sentence.lower()
     for kw in keywords:
