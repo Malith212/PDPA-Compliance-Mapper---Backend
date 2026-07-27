@@ -1,25 +1,3 @@
-"""
-Compliance Engine
-
-For each PDPA obligation, this checks every extracted sentence from the
-policy against that obligation using TWO signals:
-
-1. Semantic similarity -- does this sentence *mean* roughly the same thing
-   as our anchor phrases for this obligation? (handles paraphrasing,
-   synonyms, different wording)
-
-2. Keyword verification -- does the sentence contain at least one concrete,
-   legally-relevant term for this specific obligation? (guards against
-   generic "we care about your privacy" text scoring high on semantic
-   similarity without actually addressing the obligation)
-
-A section is only marked "compliant" when BOTH signals agree (two-stage /
-AND-logic hybrid) for at least one sentence in the policy. We check every
-sentence that clears the semantic bar (not just the single highest-scoring
-one) for a keyword match, since the most "on-topic" sentence isn't always
-the one that contains the concrete legal term. If no threshold-passing
-sentence has a keyword, or nothing clears the threshold at all, it's a "gap".
-"""
 
 import numpy as np
 from typing import Optional, List, Dict
@@ -67,16 +45,26 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
         #Step 4: Sort sentences by score, highest first
         candidate_order = np.argsort(-per_sentence_best)  # descending
 
+        # No winner found yet -- start empty
         chosen_idx = None
         matched_keyword = None
 
+        # Go through sentences, BEST score first (most relevant first)
         for idx in candidate_order:
             idx = int(idx)
             score = float(per_sentence_best[idx])
+
+            # Scores are sorted highest to lowest, so once we hit one below the
+            # threshold, every sentence after it will also fail -- stop checking.
             if score < SEMANTIC_THRESHOLD:
                 break  # sorted descending, so nothing further will pass either
+
+            # This sentence is relevant enough -- now check if it ALSO has a
+            # real legal keyword (not just similar-sounding text)
             hit = _keyword_hit(policy_text_sentences[idx], section["keywords"])
             if hit:
+        # Found a sentence that passes BOTH checks -- this is our winner.
+        # Save it and stop looking at any more sentences.
                 chosen_idx = idx
                 matched_keyword = hit
                 break
@@ -85,8 +73,11 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
             # just pick the top-scoring one anyway
             chosen_idx = int(candidate_order[0])
 
+        # Look up the winning sentence's actual score and text using its index
         best_semantic_score = float(per_sentence_best[chosen_idx])
         best_sentence = policy_text_sentences[chosen_idx]
+
+        # Did we find a keyword? Full score (1.0) if yes, zero if no
         keyword_score = 1.0 if matched_keyword else 0.0
 
         final_score = (
