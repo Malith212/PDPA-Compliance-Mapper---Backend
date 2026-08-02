@@ -60,8 +60,22 @@ PDPA_SECTIONS = [
             "To delete your data, please contact our support team with your request.",
         ],
         "keywords": [
-            "delet", "eras", "remov", "right to be forgotten",
-            "request deletion", "deletion:",
+            # Bare "delet"/"eras"/"remov" stems were removed on purpose.
+            # "We will delete your personal information when it is no
+            # longer needed" (Sampath) and "Personal data will be deleted
+            # as soon as it is no longer necessary" (Dialog) both contain
+            # those stems, but they're the company describing its OWN
+            # retention-driven auto-deletion schedule -- not a right the
+            # user can invoke. Every phrase below requires the deletion to
+            # be something the user requests/asks for/initiates, so a
+            # retention clause can no longer trigger a false "compliant".
+            "request deletion", "request erasure", "request removal",
+            "request that we", "request us to",
+            "request that we delete", "request that we erase", "requested to delete",
+            "ask us to delete", "ask us to erase", "ask to erase", "ask to delete",
+            "wish to delete", "you may delete your", "you can delete your",
+            "right to be forgotten", "right to erasure",
+            "deletion:", "with your request",
         ],
     },
     {
@@ -76,8 +90,23 @@ PDPA_SECTIONS = [
             "You can ask us for details of what personal information we store about you.",
         ],
         "keywords": [
-            "access", "copy of your data", "right to access", "view your data",
-            "request access", "data subject access", "confirm the existence of processing",
+            # Bare "access" and direction-ambiguous phrases like "access
+            # your data" were removed on purpose. "We may collect or access
+            # your personal data" (a data-collection clause, Dialog) and "we
+            # restrict access to personal data" (a security clause, Google)
+            # both contain "access your"/"access to" but mean the OPPOSITE
+            # of a user's right of access -- the company is the one doing
+            # the accessing, not the user. Every phrase below requires
+            # you/your to be the one requesting, holding, or exercising the
+            # access -- not the object of someone else's access.
+            "copy of your data", "copy of the personal data", "copy of your personal data",
+            "right to access", "you may access", "you can access",
+            "you have the right to access", "you have access to your",
+            "your right to access", "request access to your",
+            "right to request access", "you can request access",
+            "provide you with a copy", "provide you a copy", "obtain a copy of your",
+            "obtain your personal data", "view your data", "view and access", "request access",
+            "data subject access", "confirm the existence of processing",
             "confirm whether we are processing", "right to know", "know and access",
         ],
     },
