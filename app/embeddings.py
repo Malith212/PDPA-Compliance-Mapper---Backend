@@ -23,7 +23,7 @@ def embed(texts: list[str]) -> np.ndarray:
     model = get_model()
     return model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
 
-#
+
 def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
     """Cosine similarity between two already-normalised vectors."""
     return float(util.cos_sim(vec_a, vec_b).item())

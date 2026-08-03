@@ -85,6 +85,7 @@ def analyze_policy(policy_text_sentences: List[str]) -> List[Dict]:
         )
 
         semantic_pass = best_semantic_score >= SEMANTIC_THRESHOLD
+        
         if semantic_pass and matched_keyword:
             status = "compliant"
             explanation = (

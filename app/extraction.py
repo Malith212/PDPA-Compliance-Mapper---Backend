@@ -1,13 +1,3 @@
-"""
-Extraction Module
-
-Job: take the raw text of a privacy policy and break it into clean,
-individual sentences/clauses that we can then check against each PDPA
-obligation. Kept deliberately simple (regex-based) rather than depending
-on a heavy NLP toolkit -- easy to explain in a viva, and good enough for
-well-formed policy text.
-"""
-
 import re
 
 
